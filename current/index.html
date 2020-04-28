@@ -54,17 +54,19 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">电流环模型</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#1">1 基本模型</a>
+    <li class="toctree-l2"><a class="reference internal" href="#1-h">1 基本H桥模型</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#2">2 共桥臂模型</a>
+    <li class="toctree-l2"><a class="reference internal" href="#2-b-t-bt-b-t">2 基本b-t-b、t-b-t模型</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#3">3 反向共桥臂模型</a>
+    <li class="toctree-l2"><a class="reference internal" href="#3">3 共桥臂模型</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#4">4 星型四桥臂模型</a>
+    <li class="toctree-l2"><a class="reference internal" href="#4">4 反向共桥臂模型</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#5">5 环形四桥臂模型</a>
+    <li class="toctree-l2"><a class="reference internal" href="#5">5 星型四桥臂模型</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#6">6 串联绕组模型</a>
+    <li class="toctree-l2"><a class="reference internal" href="#6">6 环形四桥臂模型</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#7">7 串联绕组模型</a>
     </li>
     </ul>
                     </li>
@@ -118,37 +120,47 @@
 </code></pre></div>
 
 
-<h2 id="1">1 基本模型<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<h2 id="1-h">1 基本H桥模型<a class="headerlink" href="#1-h" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/CurrentLoop/
+</code></pre></div>
+
+
+<p>磁轴承线圈电流控制的基本拓扑，可通过改变两个开关管导通占空比实现电流控制，原理简单，结构可靠，电压利用率高。但用于多自由度磁轴承系统时对器件需求较高。</p>
+<h2 id="2-b-t-bt-b-t">2 基本b-t-b、t-b-t模型<a class="headerlink" href="#2-b-t-bt-b-t" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/CurrentLoop/btb_bridge.slx
 </code></pre></div>
 
 
-<p><img alt="conventional" src="../img/conventional.jpg" /></p>
-<h2 id="2">2 共桥臂模型<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<p>用三个桥臂控制同一自由度两个线圈的电流，减少了对功率器件的需求，且中间桥臂电流应力不会太大，在实际应用中可直接选择智能功率模块（IPM），提高集成度。在控制上需固定中间桥臂导通占空比为0.5，电压利用率较低。
+<img alt="conventional" src="../img/conventional.jpg" /></p>
+<h2 id="3">3 共桥臂模型<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/CurrentLoop/Shared_bridge.slx
 </code></pre></div>
 
 
-<p><img alt="shared_bridge" src="../img/shared_bridge.jpg" /></p>
-<h2 id="3">3 反向共桥臂模型<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p>用N+1个桥臂控制N各线圈电流，所有线圈的一端共用一个桥臂，进一步减少了对功率器件的需求。但存在共用桥臂电流应力大的缺点，不太适合实际的工业应用。控制同样需固定共用桥臂上开关器件导通占空比为0.5，电压利用率较低。
+<img alt="shared_bridge" src="../img/shared_bridge.jpg" /></p>
+<h2 id="4">4 反向共桥臂模型<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/CurrentLoop/Reversed_bridge.slx
 </code></pre></div>
 
 
-<p><img alt="reversed_bridge" src="../img/reversed_bridge.jpg" /></p>
-<h2 id="4">4 星型四桥臂模型<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<p>在共桥臂结构的基础上改变了一半线圈的电流方向，使通过共用桥臂的电流变为两个方向电流之差，大大降低了共用桥臂的电流应力，同时也降低了控制器的功率损耗。控制上可同样采用固定共用桥臂上开关器件导通占空比为0.5的控制方法，也可采用共用桥臂上开关器件导通占空比可变的控制方法，来提高电压利用率。
+<img alt="reversed_bridge" src="../img/reversed_bridge.jpg" /></p>
+<h2 id="5">5 星型四桥臂模型<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/CurrentLoop/fourleg.slx
 </code></pre></div>
 
 
-<p><img alt="four_legs" src="../img/four_legs.jpg" /></p>
-<h2 id="5">5 环形四桥臂模型<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
+<p>根据一个径向磁轴承四个电流之间的关系，采用线圈星型连接的方式，移除了共用桥臂，进一步节省了对功率器件的需求。通过合理的控制方式可使四个线圈的共模电流以及每组线圈的差分电路分别独立控制。该结构中当电感参数不对称时会带来一定的耦合，可通过采用参数不同的控制器来补偿电感不对称。
+<img alt="four_legs" src="../img/four_legs.jpg" /></p>
+<h2 id="6">6 环形四桥臂模型<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/CurrentLoop/circle_4.slx
 </code></pre></div>
 
 
 <p><img alt="four_legs_circle" src="../img/four_legs_circle.jpg" /></p>
-<h2 id="6">6 串联绕组模型<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
+<h2 id="7">7 串联绕组模型<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/CurrentLoop/Series_winding.slx
 </code></pre></div>
 
