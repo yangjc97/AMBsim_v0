@@ -62,6 +62,14 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">传感器模型</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1">1 电涡流传感器模型</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2">2 检测线圈谐振回路模型</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#3">3 检波电路模型</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#4">4 传感器带宽对控制系统的影响</a>
+    </li>
     </ul>
                     </li>
                 </ul>
@@ -102,6 +110,258 @@
             <div class="section">
               
                 <h1 id="_1">传感器模型<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/Sensor/sensor.mlx    
+AMB_Simulation_Lib/Sensor/sensor.slx
+</code></pre></div>
+
+
+<h2 id="1">1 电涡流传感器模型<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p>电涡流传感器探头部分是一个高频线圈，产生一个高频的信号作用于测量的物体上，当被测物体靠近探头时，被测物体由于电磁感应原理会产生涡流，与探头部分的高频磁场方向相反，由于涡流效应，涡流场反作用于探头线圈，使探头部分的电流发生变化，从而影响探头谐振部分的信号变化，进而将位置信号转变为电信号进行控制。</p>
+<p><img alt="" src="../img/sen1.png" />
+<center><strong>涡流传感器探头部分等效电路</strong></center></p>
+<p>电涡流传感器探头线圈和被测物体存在涡流效应，分别用原副边线圈表示，近似等效，由电路图可写出电路方程：</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+\begin{cases}
+    R_1I_1+j\omega L_1I_1-j\omega MI_2=U \\
+    -j\omega MI_1+R_2I_2+j\omega L_2I_2=0
+\end{cases}
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+\begin{cases}
+    R_1I_1+j\omega L_1I_1-j\omega MI_2=U \\
+    -j\omega MI_1+R_2I_2+j\omega L_2I_2=0
+\end{cases}
+\end{equation}</script>
+</div>
+<p>解得</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+\begin{aligned}
+    I_1 &amp;= U\cdot{R_1+R_2 \frac{\omega^2M^2}{R_2^2+\omega^2L_2^2}+j[\omega L_1-\omega L_2\cdot \frac{\omega^2M_2}{R_2^2+\omega^2L_2^2}]}^{-1}  \\
+    I_2 &amp;= \frac{M\omega^2 L_2I_1+j\omega MR_2I_1}{R_2^2+\omega^2L_2^2}
+\end{aligned}
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+\begin{aligned}
+    I_1 &= U\cdot{R_1+R_2 \frac{\omega^2M^2}{R_2^2+\omega^2L_2^2}+j[\omega L_1-\omega L_2\cdot \frac{\omega^2M_2}{R_2^2+\omega^2L_2^2}]}^{-1}  \\
+    I_2 &= \frac{M\omega^2 L_2I_1+j\omega MR_2I_1}{R_2^2+\omega^2L_2^2}
+\end{aligned}
+\end{equation}</script>
+</div>
+<p>可得到线圈的等效阻抗和电感的表达式</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+\begin{aligned}
+    Z &amp;= R_1+R_2\frac{\omega^2M^2}{R_2^2+\omega^2L_2^2}+j[\omega L_1-\omega L_2\cdot\frac{\omega^2M^2}{R_2^2+\omega L_2^2}] \\
+    L &amp;= L_1+L_2\cdot\frac{\omega^2M^2}{R_2^2+\omega^2 L_2^2}
+\end{aligned}
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+\begin{aligned}
+    Z &= R_1+R_2\frac{\omega^2M^2}{R_2^2+\omega^2L_2^2}+j[\omega L_1-\omega L_2\cdot\frac{\omega^2M^2}{R_2^2+\omega L_2^2}] \\
+    L &= L_1+L_2\cdot\frac{\omega^2M^2}{R_2^2+\omega^2 L_2^2}
+\end{aligned}
+\end{equation}</script>
+</div>
+<p>从上式可以看出，在涡流传感器测量过程中，互感系数<span><span class="MathJax_Preview">M</span><script type="math/tex">M</script></span>与电感值和阻抗都成二次函数，而探头线圈与互感系数之间又成非线性关系，故电涡流传感器的测量原理决定着在测量过程中存在非线性误差。</p>
+<h2 id="2">2 检测线圈谐振回路模型<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<p>电涡流传感器分为振荡源、调理电路、滤波电路等结构。测量线圈常采用恒频调幅式的结构。振荡源部分对检测线圈谐振回路提供一个稳频稳幅的激励信号。滤波、信号调整以及功放输出电路部分可以通过选择高频元件和优化电路设计来提高响应带宽。组成电涡流传感器的几个主要部分中,检测线圈的性能对传感器动态响应起着决定作用。检测线圈并联谐振回路的动态响应特性是影响传感器动态响应的主要因素之一。恒频调幅式电涡流位移振动传感器检测线圈谐振回路和被测体之间等效模型如图所示。<span><span class="MathJax_Preview">U_1</span><script type="math/tex">U_1</script></span>为检测电路输出电压，<span><span class="MathJax_Preview">L_1</span><script type="math/tex">L_1</script></span>为传感器探头线圈等效电感，<span><span class="MathJax_Preview">L_2</span><script type="math/tex">L_2</script></span>为被测物体等效电感，<span><span class="MathJax_Preview">R_2</span><script type="math/tex">R_2</script></span>为导体内能效电阻，<span><span class="MathJax_Preview">C</span><script type="math/tex">C</script></span>为并联谐振电容，<span><span class="MathJax_Preview">R_0</span><script type="math/tex">R_0</script></span>为分压电阻，<span><span class="MathJax_Preview">U_0</span><script type="math/tex">U_0</script></span>为激励信号电压。</p>
+<p>传感器处于工作状态下,检测线圈谐振回路实质上是一个二阶振荡回路。恒频调幅的信号的幅值变化情况直接反映了转子位移的变化情况。</p>
+<p><img alt="" src="../img/sen2.png" />
+<center><strong>恒频调幅式电涡流传感器检测线圈等效模型</strong></center></p>
+<p>由基尔霍夫定律可得到：</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+L_1C\frac{\partial^2 U_1}{\partial t^2}+R_1C\frac{\partial U_1}{\partial t}+U_1=0
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+L_1C\frac{\partial^2 U_1}{\partial t^2}+R_1C\frac{\partial U_1}{\partial t}+U_1=0
+\end{equation}</script>
+</div>
+<p>这是一个二阶常系数线性齐次微分方程。设<span><span class="MathJax_Preview">U_1=Ae^{\lambda t}</span><script type="math/tex">U_1=Ae^{\lambda t}</script></span>，则得到特征方程：</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+L_1C\lambda^2 + R_1C\lambda+1=0
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+L_1C\lambda^2 + R_1C\lambda+1=0
+\end{equation}</script>
+</div>
+<p>特征根为：</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+\begin{aligned}
+    \lambda_1 &amp;= -\frac{R_1}{2L_1}+\sqrt{(\frac{R_1}{2L_1})^2-\frac{1}{L_1C}}  \\
+    \lambda_2 &amp;= -\frac{R_1}{2L_1}-\sqrt{(\frac{R_1}{2L_1})^2-\frac{1}{L_1C}}
+\end{aligned}
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+\begin{aligned}
+    \lambda_1 &= -\frac{R_1}{2L_1}+\sqrt{(\frac{R_1}{2L_1})^2-\frac{1}{L_1C}}  \\
+    \lambda_2 &= -\frac{R_1}{2L_1}-\sqrt{(\frac{R_1}{2L_1})^2-\frac{1}{L_1C}}
+\end{aligned}
+\end{equation}</script>
+</div>
+<p>所以有</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+U_1=A_1e^{\lambda_1 t}+A_2e^{\lambda_2 t}
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+U_1=A_1e^{\lambda_1 t}+A_2e^{\lambda_2 t}
+\end{equation}</script>
+</div>
+<p><span><span class="MathJax_Preview">\lambda_1,\lambda_2</span><script type="math/tex">\lambda_1,\lambda_2</script></span>由电路的参数决定，假设<span><span class="MathJax_Preview">t=0</span><script type="math/tex">t=0</script></span>时，<span><span class="MathJax_Preview">U_1=U</span><script type="math/tex">U_1=U</script></span>并且电路中电流为零，有</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+A_1=\frac{\lambda_2 U}{\lambda_2 - \lambda_1} , A_2=\frac{\lambda_1 U}{\lambda_2 - \lambda_1} 
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+A_1=\frac{\lambda_2 U}{\lambda_2 - \lambda_1} , A_2=\frac{\lambda_1 U}{\lambda_2 - \lambda_1} 
+\end{equation}</script>
+</div>
+<p>由于传感器处于工作状态时，整个回路处于接近谐振状态的振荡回路，所以是一队共轭复数，若定义：</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+\delta=\frac{R_1}{2L_1} ,  \omega^2=\frac{1}{L_1C}
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+\delta=\frac{R_1}{2L_1} ,  \omega^2=\frac{1}{L_1C}
+\end{equation}</script>
+</div>
+<p>可以求出</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+U_1=\frac{\omega_0}{\sqrt{\omega_0-\delta^2}}Ue^\theta {\rm sin}(\beta+t\sqrt{\omega_0^2-\delta^2})  \\
+其中 \beta = {\rm arccos}\frac{\delta}{\omega_0}  (0&lt;\beta&lt;90^。)
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+U_1=\frac{\omega_0}{\sqrt{\omega_0-\delta^2}}Ue^\theta {\rm sin}(\beta+t\sqrt{\omega_0^2-\delta^2})  \\
+其中 \beta = {\rm arccos}\frac{\delta}{\omega_0}  (0<\beta<90^。)
+\end{equation}</script>
+</div>
+<p><span><span class="MathJax_Preview">U_1</span><script type="math/tex">U_1</script></span>是一个振荡衰减的信号，如果电涡流传感器<span><span class="MathJax_Preview">U</span><script type="math/tex">U</script></span>是一个正弦信号，当<span><span class="MathJax_Preview">U</span><script type="math/tex">U</script></span>发生变化时，<span><span class="MathJax_Preview">U_1</span><script type="math/tex">U_1</script></span>的响应时间由时间常数<span><span class="MathJax_Preview">\frac{1}{\delta}=2\frac{L_1}{R_1}</span><script type="math/tex">\frac{1}{\delta}=2\frac{L_1}{R_1}</script></span>决定。检测线圈谐振回路的相应特性可以用一个一阶惯性系统来表示，<span><span class="MathJax_Preview">U_1</span><script type="math/tex">U_1</script></span>相应带宽的上限截止频率应为：</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+f_H=\frac{R_1}{4\pi L_1}
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+f_H=\frac{R_1}{4\pi L_1}
+\end{equation}</script>
+</div>
+<h2 id="3">3 检波电路模型<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p>电涡流传感器中最常见的检波方式是倍压检波，检波电路将交流电压信号幅值变化转化为相应的直流电压信号，在之后还可增加滤波电路对信号进行处理。该电路的时间常数为<span><span class="MathJax_Preview">\frac{1}{R_2C}</span><script type="math/tex">\frac{1}{R_2C}</script></span>，可以用一个一阶惯性环节来表示。</p>
+<p><img alt="" src="../img/sen3.png" />
+<center><strong>倍压检波电路</strong></center></p>
+<p>电涡流传感器的传递函数可以表示为：</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+G(s)=\frac{1}{(1+2\frac{L_1}{R_1}s)(1+R_2Cs)}
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+G(s)=\frac{1}{(1+2\frac{L_1}{R_1}s)(1+R_2Cs)}
+\end{equation}</script>
+</div>
+<p>由此可见，电涡流传感器的动态特性主要由检测线圈谐振回路和检波回路决定的。根据传感器的传递函数可以得到电涡流传感器的频率响应特性曲线</p>
+<p><img alt="" src="../img/sen3.2.png" />
+<center><strong>传感器频率响应特性曲线</strong></center></p>
+<div class="codehilite"><pre><span></span><code>%% 传感器参数
+R1 = 4;         %探头线圈内阻Ω
+L1 = 4.5e-5;    %线圈电感H
+R = 1e3;        %检波电路电阻Ω
+C2 = 4e-10;     %检波电路电容F
+%% 传感器模型动态响应特性图
+GH = tf([1],[2*L1*R*C2/R1 , 2*L1/R1+R*C2 , 1 ])
+bode(GH);
+grid on;
+%% 传感器模型动态响应特性图
+GH = tf([1],[2*L1*R*C2/R1 , 2*L1/R1+R*C2 , 1 ])
+bode(GH);
+grid on ;
+hold on;
+</code></pre></div>
+
+
+<p>电涡流传感器的动态响应特性由，测量探头和检测电路的参数决定，通过对探头谐振参数的选择可以改变传感器的响应带宽，但是还需综合考虑传感器的灵敏度，稳定性等影响。</p>
+<h2 id="4">4 传感器带宽对控制系统的影响<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<p>在实际应用中，由于传感器有带宽上限，因为探头谐振回路参数和检波电路等因素的影响，因此当传感器带宽有限时，我们需要分析其对整个控制系统性能的影响。考虑传感器带宽后的系统控制框图如图所示</p>
+<p><img alt="" src="../img/sen4.png" />
+<center><strong>考虑传感器带宽后系统框图</strong></center></p>
+<p>先考虑简化模型，将传感器环节以及功放环节忽略。考虑被控后的系统表现与一个机械弹簧类似，存在刚度<span><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>以及阻尼<span><span class="MathJax_Preview">d</span><script type="math/tex">d</script></span>，有：<span><span class="MathJax_Preview">f=-kx-d\dot{x}</span><script type="math/tex">f=-kx-d\dot{x}</script></span>，并与之前的磁轴承力线性化表达式联立，得到控制电流的表达式为：</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+i(x)=-\frac{(k+k_x)x+d\dot{x}}{k_i}
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+i(x)=-\frac{(k+k_x)x+d\dot{x}}{k_i}
+\end{equation}</script>
+</div>
+<p>采用PD控制对系统的控制效果主要取决于设计系统的刚度以及阻尼的大小。对于系统刚度，一般选择与磁轴承位移系数<span><span class="MathJax_Preview">k_x</span><script type="math/tex">k_x</script></span>处于一个数量级，而系统的阻尼选择则与系统刚度相关，一般选择<span><span class="MathJax_Preview">d=2\sqrt{mk}</span><script type="math/tex">d=2\sqrt{mk}</script></span>。
+位置控制采用PD控制，电流环等效为一个一阶惯性环节，传感器等效为一个一阶环节。加入传感器模型后系统的开环传递函数为：</p>
+<div>
+<div class="MathJax_Preview">\begin{equation}
+G(s)H(s)=(P+Ds)\cdot\frac{\omega_c}{s+\omega_c}\cdot\frac{k_i}{ms^2+k_x}\cdot\frac{1}{1+2\frac{L_1}{R_1}s}
+\end{equation}</div>
+<script type="math/tex; mode=display">\begin{equation}
+G(s)H(s)=(P+Ds)\cdot\frac{\omega_c}{s+\omega_c}\cdot\frac{k_i}{ms^2+k_x}\cdot\frac{1}{1+2\frac{L_1}{R_1}s}
+\end{equation}</script>
+</div>
+<div class="codehilite"><pre><span></span><code>%% 系统参数
+R1 = 4;         %线圈内阻Ω
+L1 = 4.5e-5;    %线圈电感H
+t = R1/2*L1;    %传感器带宽
+R = 1e3;        %检波电路电阻Ω
+C2 = 4e-10;     %检波电路电容F
+wc = 500*pi;    %电流环带宽rad/s
+ks = -2.6e6;    %力位移系数N/m
+ki = 260;       %力电流系数N/A
+m = 10;         %转子质量kg
+</code></pre></div>
+
+
+<p>P、D参数基于磁轴承电流控制表达式得到，电流环带宽选为500Hz，其他参数均为实验平台具体参数。得到系统在增加传感器模型后特征根的变化图。</p>
+<p><img alt="" src="../img/sen4.2.png" />
+<center><strong>未加传感器模型时系统的特征根</strong></center></p>
+<p>首先考虑传感器参数确定时传感器带宽对系统稳定性的影响。</p>
+<div class="codehilite"><pre><span></span><code>%% 未加传感器模型时系统特征根的变化
+L1=0;
+for k=-ks:-ks:-100*ks
+    P = (k+ks)/ki;
+    D =2*sqrt(m*k)/ki;
+    G=tf([D*wc*ki,wc*ki*P],[2*m*L1/R1, wc*m*2*L1/R1+m , ks*2*L1/R1+wc*m, wc*ks*2*L1/R1+ks , wc*ks]);
+    r= rlocus(G,1);
+    plot(real(r),imag(r),&#39;*b&#39;);
+    hold on;
+end
+grid on;
+</code></pre></div>
+
+
+<p>取传感器的带宽从500Hz到20kHz，当传感器带宽小于600Hz时，特征根出现在复平面的右半平面，整个系统不稳定，带宽越大，加入传感器模型后系统的特征根位置与之前的系统越接近。</p>
+<p><img alt="" src="../img/sen4.3.png" />
+<center><strong>增加传感器模型时系统的特征根变化</strong></center></p>
+<p>加入传感器模型后，系统特征方程在负实轴上多了一个特征根，但远离虚轴，对系统性能影响不大。
+当传感器带宽不变时，位置环控制参数变化时。</p>
+<div class="codehilite"><pre><span></span><code>%% 加入传感器模型后系统特征根的变化
+L1 = 4.5e-5;
+t = 1e4*pi;
+for k=-ks:-ks:-100*ks
+    P = (k+ks)/ki;%I =  
+    D =2*sqrt(m*k)/ki;
+    G = tf([D*wc*ki, wc*ki*P] , [m/t , wc*m/t+m , ks/t+wc*m, wc*ks/t+ks , wc*ks]);
+    r= rlocus(G,1);
+    plot(real(r),imag(r),&#39;or&#39;);
+    hold on;
+end
+grid on;
+</code></pre></div>
+
+
+<p>设置传感器带宽5kHz，取位置环刚度<span><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>从<span><span class="MathJax_Preview">|k_x|</span><script type="math/tex">|k_x|</script></span>取值到100倍<span><span class="MathJax_Preview">|k_x|</span><script type="math/tex">|k_x|</script></span>。由于传感器模型的加入，主要影响系统性能的两个特征根从<span><span class="MathJax_Preview">k=5|k_x|</span><script type="math/tex">k=5|k_x|</script></span>开始与之前的系统有了明显的偏离，说明系统受到电流环的影响逐渐增大，当系统刚度增加到<span><span class="MathJax_Preview">k=28|k_x|</span><script type="math/tex">k=28|k_x|</script></span>时，特征根出现在了复平面的右半平面，系统失稳。</p>
+<p><img alt="" src="../img/sen4.4.png" />
+<center><strong>位置环控制参数变化时系统的特征根变化</strong></center></p>
+<p>从上面的分析可得，传感器带宽越高，也就是传感器品质因数越小，对系统性能的影响越小，并且系统的刚度越高，对传感器的带宽要求就越高。因此在设计磁轴承系统时，传感器需要合适的带宽，同时，轴承的刚度需根据实际系统进行选取，不宜取太高。</p>
               
             </div>
           </div>

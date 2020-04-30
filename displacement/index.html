@@ -127,9 +127,9 @@
 
 <p>振动是旋转机械中普遍存在的问题，当转子的几何中心与质心不重合时，转子旋转过程会产生与转速同频的离心力扰动，进而在使得转子径向位移产生振动，离心力是振动的主要来源。当转子由磁悬浮轴承支撑时，位移的振动会导致磁轴承电流出现波动，不平衡力也通过磁轴承传导引起机壳与支座振动。而磁悬浮轴承相对于传统机械轴承的主要优势在于其可产生主动控制力，这对于抑制转子位移振动或降低机壳等外部支撑部件的振动提供了良好的解决方案。</p>
 <p><img alt="" src="../img/dis1.1.jpg" />
-<center>磁悬浮轴承示意图</center></p>
+<center><strong>磁悬浮轴承示意图</strong></center></p>
 <p><img alt="" src="../img/basic.jpg" />
-<center>磁悬浮轴承控制框图</center></p>
+<center><strong>磁悬浮轴承控制框图</strong></center></p>
 <h2 id="2">2 线性模型与非线性模型<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/DisplaceLoop/Linear &amp; Nonlinear.slx
 </code></pre></div>
@@ -166,7 +166,7 @@
 <p>电流指令是由传感器所采集的转子位移经过位置控制器生成的，电流波动（振动）的原因主要是位移信号中存在与转速同频的信号。较大的电流波动可能会导致轴承功放饱和，基座振动加剧，或引起系统失稳。应用自适应陷波器将位移信号的转速频以及倍频分量滤除是降低电流振动的常用方法。
 由于同频干扰是位移信号中频率为<span><span class="MathJax_Preview">\omega_R</span><script type="math/tex">\omega_R</script></span>的正弦量，因此可以采用中心陷波频率随转速变化的自适应陷波器对其进行去除。自适应陷波器工作原理如下图所示，陷波器<span><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>的核心是凹陷反馈环节<span><span class="MathJax_Preview">N_f</span><script type="math/tex">N_f</script></span>，其中心频率可依据转速变化而改变， <span><span class="MathJax_Preview">\epsilon</span><script type="math/tex">\epsilon</script></span>决定陷波器 <span><span class="MathJax_Preview">N(s)</span><script type="math/tex">N(s)</script></span>的收敛速度和中心陷波带宽。 </p>
 <p><img alt="" src="../img/2020-04-10-16-46-53.png" />
-<center>前项通道含陷波器控制框图</center></p>
+<center><strong>前项通道含陷波器控制框图</strong></center></p>
 <p>陷波器反馈环节<span><span class="MathJax_Preview">N_f</span><script type="math/tex">N_f</script></span>的传递函数为</p>
 <div>
 <div class="MathJax_Preview">\begin{equation}
@@ -189,7 +189,7 @@ N_O(s)=\frac{\epsilon s}{s^2+\epsilon s+\omega_R^2}
 <h3 id="32">3.2 零作用力控制<a class="headerlink" href="#32" title="Permanent link">&para;</a></h3>
 <p>磁轴承的载荷主要由电流力与位移力两部分构成（<span><span class="MathJax_Preview">F=k_ii+k_xx</span><script type="math/tex">F=k_ii+k_xx</script></span>），若希望消去轴承载荷力的振动，还应将<span><span class="MathJax_Preview">k_xx</span><script type="math/tex">k_xx</script></span>项消去，常见的方法为前馈消去法。用自适应陷波器提取位移中的同频分量后，选取合适的前馈增益，将<span><span class="MathJax_Preview">k_xx</span><script type="math/tex">k_xx</script></span>项中的同频分量抵消。偿机构中<span><span class="MathJax_Preview">K=K_h/K_i</span><script type="math/tex">K=K_h/K_i</script></span>，为磁轴承位移刚度与电流刚度的比值。</p>
 <p><img alt="" src="../img/dis3.2.png" />
-<center>零作用力控制框图</center></p>
+<center><strong>零作用力控制框图</strong></center></p>
 <h2 id="4">4 转速辨识与位移振动抑制<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/DisplaceLoop/SOGI_NTC_FARWARD
 </code></pre></div>
@@ -197,10 +197,10 @@ N_O(s)=\frac{\epsilon s}{s^2+\epsilon s+\omega_R^2}
 
 <p>采用基于二阶广义积分-锁频环（SOGI-FLL）的转子频率估计法。SOGI-FLL主要包括二阶广义积分模块、锁频环模块以及增益归一化模块。其中，<span><span class="MathJax_Preview">v_\alpha、v_\beta</span><script type="math/tex">v_\alpha、v_\beta</script></span>为SOGI的两相输出，<span><span class="MathJax_Preview">e</span><script type="math/tex">e</script></span>为 SOGI的估计误差，<span><span class="MathJax_Preview">e_f</span><script type="math/tex">e_f</script></span>为FLL的估计误差，<span><span class="MathJax_Preview">\omega_f</span><script type="math/tex">\omega_f</script></span>为初始触发频率， <span><span class="MathJax_Preview">\omega^,</span><script type="math/tex">\omega^,</script></span>为估计频率。</p>
 <p><img alt="" src="../img/2020-04-15-14-45-39.png" />
-<center>SOGI-FLL频率估计框图</center></p>
+<center><strong>SOGI-FLL频率估计框图</strong></center></p>
 <p>若对位移振动进行抑制，可对位移信号的转速频分量进行放大，经由位置控制器产生相应的控制信号。若简单地增加采样增益，则谐波与噪声成分也会被放大，不利于系统稳定，因此只增加转速频成分增益是振动抑制的关键。通过二阶广义积分-锁频环（SOGI-FLL）后接广义带通滤波器（GBPF）的方法从控制电流信号中提取振动频率。若由位移信号对转速信号进行提取，则SOGI可同时生成位移信号的转速频分量，将其前馈至位移信号中可提升增益；若由电流信号对转速信号进行提取，则需增加一个同频位移提取环节，采用自适应窄带带通滤波器提取，振动抑制策略见下图。</p>
 <p><img alt="" src="../img/2020-04-15-15-00-09.png" />
-<center>磁悬浮轴承转子位移振动抑制框图</center></p>
+<center><strong>磁悬浮轴承转子位移振动抑制框图</strong></center></p>
               
             </div>
           </div>
