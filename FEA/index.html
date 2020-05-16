@@ -66,6 +66,14 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">有限元模型</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1">1 基本模型</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2">2 参数扫描</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#3">3 转子偏心</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#4">4 联合仿真</a>
+    </li>
     </ul>
                     </li>
                 </ul>
@@ -102,8 +110,31 @@
             <div class="section">
               
                 <h1 id="_1">有限元模型<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p><img alt="" src="../img/MagB.png" /></p>
-<p><img alt="" src="../img/Force.png" /></p>
+<div class="codehilite"><pre><span></span><code>AMB_Simulation_Lib/FEA/AMBsim_v1.aedt
+AMB_Simulation_Lib/FEA/Series_windings.slx  (联合仿真模型)
+</code></pre></div>
+
+
+<h2 id="1">1 基本模型<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p><img alt="" src="../img/mesh.png" />
+<center><strong>网格剖分</strong></center></p>
+<p><img alt="" src="../img/B.png" />
+<center><strong>磁密云图</strong></center></p>
+<p><img alt="" src="../img/F.png" />
+<center><strong>转子受力</strong></center></p>
+<h2 id="2">2 参数扫描<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<p><img alt="" src="../img/sweep_I.png" />
+<center><strong>参数扫描——电流I</strong></center></p>
+<p><img alt="" src="../img/sweep_x.png" />
+<center><strong>参数扫描——位置x</strong></center></p>
+<p><img alt="" src="../img/sweep_x.gif" />
+<center><strong>参数扫描——位置x（gif）</strong></center></p>
+<h2 id="3">3 转子偏心<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p><img alt="" src="../img/eccentric%20force.png" />
+<center><strong>转子偏心受力</strong></center></p>
+<h2 id="4">4 联合仿真<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<p><img alt="" src="../img/simplorer.png" />
+<center><strong>simplorer模型</strong></center></p>
               
             </div>
           </div>
